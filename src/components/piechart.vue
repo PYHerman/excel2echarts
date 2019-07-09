@@ -5,8 +5,12 @@
 
 <script>
     import echarts from 'echarts'
+    import ExcelTable from './exceltable'
     export default {
-        name: "piechart",
+        // name: "piechart",
+        component:{
+
+        },
         props: {
             className: {
                 type: String,
@@ -116,8 +120,6 @@
                             }
                         }
                     ],
-
-
             })
         }
     }

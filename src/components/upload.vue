@@ -33,6 +33,7 @@
         this.excelData.header = header//数据储存在excelData.header和excelData.results中
         this.excelData.results = results
         this.onSuccess && this.onSuccess(this.excelData)
+
       },
       handleDrop(e) {
         e.stopPropagation()//不再派发事件
