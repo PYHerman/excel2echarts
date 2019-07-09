@@ -15,6 +15,28 @@
     import echarts from 'echarts'
    import UploadExcelComponent from './upload'
 
+   function UpdateEcharts(data) {
+
+        var temp = JSON.stringify(data)//提取省份和应用锁数据
+       var newd = JSON.parse(temp);
+        console.log(newd);
+
+        var province={
+            name:null,
+            value:null
+        };//按储存省份数据
+        var newdata=new Array();
+        for(var key in newd){
+            //console.log("key名称是："+key+",key的值是："+newd[key]['分支']+newd[key]['应用锁'])
+            province.name=newd[key]['分支'];
+            province.value=newd[key]['应用锁'];
+
+            newdata.push(province);
+            console.log(newdata);//////////////////////////////////////////////////////待解决
+        }
+        console.log(newdata);
+
+   }
     export default {
         name:"mapchart",
         components:{
@@ -91,7 +113,8 @@
                         }
                     },
                     data:[
-                        {name:'北京',value:123},
+                        {name:'北京',value:0},
+
                     ],
 
                 }],
@@ -118,7 +141,9 @@
             handleSuccess({ results, header }) {
                 this.tableData = results
                 this.tableHeader = header
+                UpdateEcharts(this.tableData)
             },
+
         }
     }
 </script>
