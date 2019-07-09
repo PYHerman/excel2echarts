@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
   <div>
     <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
@@ -29,20 +30,20 @@
     },
     methods: {
       generateData({ header, results }) {
-        this.excelData.header = header
+        this.excelData.header = header//数据储存在excelData.header和excelData.results中
         this.excelData.results = results
         this.onSuccess && this.onSuccess(this.excelData)
       },
       handleDrop(e) {
-        e.stopPropagation()
-        e.preventDefault()
+        e.stopPropagation()//不再派发事件
+        e.preventDefault()//取消默认动作
         if (this.loading) return
         const files = e.dataTransfer.files
         if (files.length !== 1) {
           this.$message.error('Only support uploading one file!')
           return
         }
-        const rawFile = files[0] // only use files[0]
+        const rawFile = files[0] // rawFile为上传的第一个文件
 
         if (!this.isExcel(rawFile)) {
           this.$message.error('Only supports upload .xlsx, .xls, .csv suffix files')
@@ -84,11 +85,11 @@
           const reader = new FileReader()
           reader.onload = e => {
             const data = e.target.result
-            const workbook = XLSX.read(data, { type: 'array' })//读取excel文件
+            const workbook = XLSX.read(data, { type: 'array' })//读取excel文件，作为数组保存
             const firstSheetName = workbook.SheetNames[0]
-            const worksheet = workbook.Sheets[firstSheetName]//工作表
-            const header = this.getHeaderRow(worksheet)
-            const results = XLSX.utils.sheet_to_json(worksheet)
+            const worksheet = workbook.Sheets[firstSheetName]//worksheet第一个工作表
+            const header = this.getHeaderRow(worksheet)//header为表头
+            const results = XLSX.utils.sheet_to_json(worksheet)//results为json格式的表格
             this.generateData({ header, results })
             this.loading = false
             resolve()
