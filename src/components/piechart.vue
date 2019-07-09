@@ -1,15 +1,22 @@
 <template>
-
-    <div :id="id" class=chart-container :style="{height:height,width:width}" />
+    <div>
+        <div :id="id" class=chart-container :style="{height:height,width:width}" />
+        <div class="app-container">
+            <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
+            <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
+                <el-table-column v-for="item of tableHeader" :key="item" :prop="item" :label="item" />
+            </el-table>
+        </div>
+    </div>
 </template>
 
 <script>
     import echarts from 'echarts'
-    import ExcelTable from './exceltable'
+    import UploadExcelComponent from './upload'
     export default {
-        // name: "piechart",
-        component:{
-
+         name: "piechart",
+        components:{
+            UploadExcelComponent,
         },
         props: {
             className: {
@@ -31,7 +38,9 @@
         },
         data() {
             return {
-                chart: null
+                chart: null,
+                tableData: [],
+                tableHeader: []
             }
         },
         mounted() {
@@ -45,6 +54,25 @@
             this.chart = null
         },
         methods: {
+             //检测上传文件更新表格
+            beforeUpload(file) {
+                const isLt1M = file.size / 1024 / 1024 < 1
+
+                if (isLt1M) {
+                    return true
+                }
+
+                this.$message({
+                    message: 'Please do not upload files larger than 1m in size.',
+                    type: 'warning'
+                })
+                return false
+            },
+            handleSuccess({ results, header }) {
+                this.tableData = results
+                this.tableHeader = header
+            },
+            //以下为echarts配置
             initChart() {
                 this.chart = echarts.init(document.getElementById(this.id))
 

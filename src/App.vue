@@ -5,12 +5,6 @@
 <!--侧边导航栏-->
         <Aside/>
         <el-main>
-<!--上传excel区域-->
-        <el-row>
-
-            <el-col :span="24"><Table/></el-col>
-        </el-row>
-
 <!--路由视图-->
             <el-row>
                 <el-col :span="24"><router-view></router-view></el-col>
@@ -22,9 +16,8 @@
 </template>
 
 <script>
-import upExcel from "./components/upload"
+
 import Aside from "./components/aside"
-import Table from "./components/exceltable"
 
 export default {
   name: 'app',
@@ -32,9 +25,9 @@ export default {
 
   },
   components:{
-        upExcel,
+
         Aside,
-        Table,
+
 
 
   }

@@ -1,11 +1,25 @@
 <template>
+    <div>
     <div :id="id" class=chart-container :style="{height:height,width:width}" />
+    <div class="app-container">
+        <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
+        <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
+            <el-table-column v-for="item of tableHeader" :key="item" :prop="item" :label="item" />
+        </el-table>
+    </div>
+    </div>
+
 </template>
 <script>
    import 'echarts/map/js/china'
     import echarts from 'echarts'
+   import UploadExcelComponent from './upload'
+
     export default {
         name:"mapchart",
+        components:{
+            UploadExcelComponent,
+        },
         props: {
             className: {
                 type: String,
@@ -17,16 +31,18 @@
             },
             width: {
                 type: String,
-                default: '100%'
+                default: '50%'
             },
             height: {
                 type: String,
-                default: '300px'
+                default: '500px'
             }
         },
         data() {
             return {
-                chart: null
+                chart: null,
+                tableData: [],
+                tableHeader: []
             }
         },
         mounted() {
@@ -42,13 +58,67 @@
              * https://www.cnblogs.com/xianwen/p/6045454.html
              */
             let option = {
+                tooltip:{},
+                //侧边滑块配置
+                visualMap:{
+                    min:0,
+                    max:10000,
+                    left:'left',
+                    text:['高','低'],
+
+                    inRange:{
+                        color:['#fff585', 'rgb(199,54,67)']
+                    },
+                    realtime:false,
+                    calculable:true,
+
+                },
                 series: [{
+                    name:'数据1',
                     type: 'map',
-                    // mapType: 'china'// mapType或者map都可以
                     map: 'china',
-                }]
+                    roam: true,
+                    label:{
+                        normal: {
+                            show: false,//显示省份标签
+                            formatter:'{b}',
+                            position:'right',
+                            textStyle:{color:"rgba(20,2,4,0.93)"}//省份标签字体颜色
+                        },
+                        emphasis: {//对应的鼠标悬浮效果
+                            show: true,
+                            textStyle:{color:"#800080"}
+                        }
+                    },
+                    data:[
+                        {name:'北京',value:123},
+                    ],
+
+                }],
+
+
+
             };
             myChart.setOption(option);
+        },
+        methods:{
+            beforeUpload(file) {
+                const isLt1M = file.size / 1024 / 1024 < 1
+
+                if (isLt1M) {
+                    return true
+                }
+
+                this.$message({
+                    message: 'Please do not upload files larger than 1m in size.',
+                    type: 'warning'
+                })
+                return false
+            },
+            handleSuccess({ results, header }) {
+                this.tableData = results
+                this.tableHeader = header
+            },
         }
     }
 </script>
