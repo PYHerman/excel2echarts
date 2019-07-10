@@ -17,28 +17,21 @@
 
    function UpdateEcharts(data) {
        var res = [];
-        var temp = JSON.stringify(data)//提取省份和应用锁数据
+       //转化数据格式，最终生成的newd为map结构
+        var temp = JSON.stringify(data)
        var newd = JSON.parse(temp);
         console.log(newd);
         for(var key in newd){
-            //console.log("key名称是："+key+",key的值是："+newd[key]['分支']+newd[key]['应用锁'])
-
-
-            if ( newd[key]['分支']) {
+            //作为测试只提取了省份名和应用锁两个数据，后期可以通过加series来增加显示数据
+            if ( newd[key]['分支']){
                 res.push({
                     name: newd[key]['分支'],
                     value: newd[key]['应用锁']
                 });
-
             }
-            //console.log(newdata);//////////////////////////////////////////////////////待解决
         }
-
-       console.log(res);
         return res;
-
-
-   };
+   }
 
     export default {
         name:"mapchart",
@@ -56,7 +49,7 @@
             },
             width: {
                 type: String,
-                default: '50%'
+                default: '100%'
             },
             height: {
                 type: String,
@@ -70,6 +63,7 @@
                 tableHeader: []
             }
         },
+        //声明chart
         mounted() {
             this.initChart()
         },
@@ -81,26 +75,42 @@
             this.chart = null
         },
         methods:{
+            //校验文件
             beforeUpload(file) {
-                const isLt1M = file.size / 1024 / 1024 < 1
-
-                if (isLt1M) {
-                    return true
-                }
-
-                this.$message({
-                    message: 'Please do not upload files larger than 1m in size.',
-                    type: 'warning'
-                })
-                return false
+                // const isLt1M = file.size / 1024 / 1024 < 1
+                //
+                // if (isLt1M) {
+                //     return true
+                // }
+                //
+                // this.$message({
+                //     message: 'Please do not upload files larger than 1m in size.',
+                //     type: 'warning'
+                // })
+                // return false
+                return true
             },
+            //上传文件成功
             handleSuccess({ results, header }) {
                 this.tableData = results
                 this.tableHeader = header
+
+                //动态更新echarts数据
+                var newdata=UpdateEcharts(this.tableData);
+                newdata.sort(function (a, b) {
+                    return b.value - a.value;
+                });
                 this.chart.setOption({
+                    visualMap:{
+                        min:newdata[newdata.length-1].value,
+                        max:newdata[0].value,
+                    },
+
                     series: [{
-                        data: UpdateEcharts(this.tableData)
-                    }]
+                        name:'应用锁',
+                        data: newdata,
+                    }],
+
                 })
             },
             //---------------------echarts-----------------------------
@@ -123,6 +133,14 @@
                         calculable:true,
 
                     },
+
+                    toolbox: {
+                        feature: {
+                            dataView: {show: true, readOnly: false},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
                     series: [{
                         name:'数据1',
                         type: 'map',
@@ -140,17 +158,13 @@
                                 textStyle:{color:"#800080"}
                             }
                         },
+
                         data:[],
 
                     }],
 
-
-
                 })
-
-
             },
-
         }
     }
 </script>

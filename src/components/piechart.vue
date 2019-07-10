@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="">
         <div :id="id" class=chart-container :style="{height:height,width:width}" />
         <div class="app-container">
             <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />

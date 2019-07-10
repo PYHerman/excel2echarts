@@ -14,6 +14,43 @@
     import echarts from 'echarts'
     import UploadExcelComponent from './upload'
 
+    //修改表头
+    function SetHeader(data) {
+        var res = [];
+        for(var key in data)
+        {
+            //待定方法，筛去多余表头元素
+            if(data[key]==='名称')
+                continue;
+            res.push(data[key])
+        }
+        // console.log(res);
+        return res;
+    }
+
+    //修改图表内容
+    function SetTable(data) {
+        var series = [];
+        //转化数据格式，最终生成的newd为map结构
+
+         var temp = JSON.stringify(data)
+         var newd = JSON.parse(temp);
+        //console.log(newd);
+        for(var key in newd){
+            let name=newd[key]['名称'];
+
+            let array=Object.values(newd[key]);
+            array.splice(0,1);
+            series.push({
+                name:name,
+                data:array,
+                type:'line',
+            })
+            console.log(array)
+        }
+        //console.log(res);
+        return series;
+    }
 
     export default {
         name:"linechart",
@@ -72,186 +109,97 @@
             handleSuccess({ results, header }) {
                 this.tableData = results
                 this.tableHeader = header
+
+                //动态更新echarts数据
+                //console.log(this.tableHeader);
+                //console.log(this.tableData);
+
+                this.chart.setOption({
+                    //按日期设置x轴
+                    xAxis:{
+                        data:SetHeader(this.tableHeader)
+
+                    },
+                    series:SetTable(this.tableData)
+
+
+                })
             },
             // ----------------echarts---------------
             initChart() {
                 this.chart = echarts.init(document.getElementById(this.id))
 
                 this.chart.setOption({
-                    backgroundColor: '#394056',
-                    title: {
-                        top: 20,
-                        text: '测试样例',
-                        textStyle: {
-                            fontWeight: 'normal',
-                            fontSize: 16,
-                            color: '#F1F1F3'
-                        },
-                        left: '1%'
-                    },
                     tooltip: {
                         trigger: 'axis',
                         axisPointer: {
-                            lineStyle: {
-                                color: '#57617B'
+                            type: 'cross',
+                            crossStyle: {
+                                color: '#999'
                             }
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            dataView: {show: true, readOnly: false},
+                            magicType: {show: true, type: ['line', 'bar']},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
                         }
                     },
                     legend: {
-                        top: 20,
-                        icon: 'rect',
-                        itemWidth: 14,
-                        itemHeight: 5,
-                        itemGap: 13,
-                        data: ['CMCC', 'CTCC', 'CUCC'],
-                        right: '4%',
-                        textStyle: {
-                            fontSize: 12,
-                            color: '#F1F1F3'
-                        }
+                        data: ['蒸发量', '降水量', '平均温度']
                     },
-                    grid: {
-                        top: 100,
-                        left: '2%',
-                        right: '2%',
-                        bottom: '2%',
-                        containLabel: true
-                    },
-                    xAxis: [{
-                        type: 'category',
-                        boundaryGap: false,
-                        axisLine: {
-                            lineStyle: {
-                                color: '#57617B'
-                            }
-                        },
-                        data: ['13:00', '13:05', '13:10', '13:15', '13:20', '13:25', '13:30', '13:35', '13:40', '13:45', '13:50', '13:55']
-                    }],
-                    yAxis: [{
-                        type: 'value',
-                        name: '(%)',
-                        axisTick: {
-                            show: false
-                        },
-                        axisLine: {
-                            lineStyle: {
-                                color: '#57617B'
-                            }
-                        },
-                        axisLabel: {
-                            margin: 10,
-                            textStyle: {
-                                fontSize: 14
-                            }
-                        },
-                        splitLine: {
-                            lineStyle: {
-                                color: '#57617B'
+                    xAxis: [
+                        {
+
+                            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                            axisPointer: {
+                                type: 'shadow'
                             }
                         }
-                    }],
-                    series: [{
-                        name: 'CMCC',
-                        type: 'line',
-                        smooth: true,
-                        symbol: 'circle',
-                        symbolSize: 5,
-                        showSymbol: false,
-                        lineStyle: {
-                            normal: {
-                                width: 1
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '水量',
+                            min: 0,
+                            max: 250,
+                            interval: 50,
+                            axisLabel: {
+                                formatter: '{value} ml'
                             }
                         },
-                        areaStyle: {
-                            normal: {
-                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                    offset: 0,
-                                    color: 'rgba(137, 189, 27, 0.3)'
-                                }, {
-                                    offset: 0.8,
-                                    color: 'rgba(137, 189, 27, 0)'
-                                }], false),
-                                shadowColor: 'rgba(0, 0, 0, 0.1)',
-                                shadowBlur: 10
+                        {
+                            type: 'value',
+                            name: '温度',
+                            min: 0,
+                            max: 25,
+                            interval: 5,
+                            axisLabel: {
+                                formatter: '{value} °C'
                             }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '蒸发量',
+                            type: 'bar',
+                            data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
                         },
-                        itemStyle: {
-                            normal: {
-                                color: 'rgb(137,189,27)',
-                                borderColor: 'rgba(137,189,2,0.27)',
-                                borderWidth: 12
+                        {
+                            name: '降水量',
+                            type: 'bar',
+                            data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+                        },
+                        {
+                            name: '平均温度',
+                            type: 'line',
+                            yAxisIndex: 1,
+                            data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+                        }
 
-                            }
-                        },
-                        data: [220, 182, 191, 134, 150, 120, 110, 125, 145, 122, 165, 122]
-                    }, {
-                        name: 'CTCC',
-                        type: 'line',
-                        smooth: true,
-                        symbol: 'circle',
-                        symbolSize: 5,
-                        showSymbol: false,
-                        lineStyle: {
-                            normal: {
-                                width: 1
-                            }
-                        },
-                        areaStyle: {
-                            normal: {
-                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                    offset: 0,
-                                    color: 'rgba(0, 136, 212, 0.3)'
-                                }, {
-                                    offset: 0.8,
-                                    color: 'rgba(0, 136, 212, 0)'
-                                }], false),
-                                shadowColor: 'rgba(0, 0, 0, 0.1)',
-                                shadowBlur: 10
-                            }
-                        },
-                        itemStyle: {
-                            normal: {
-                                color: 'rgb(0,136,212)',
-                                borderColor: 'rgba(0,136,212,0.2)',
-                                borderWidth: 12
-
-                            }
-                        },
-                        data: [120, 110, 125, 145, 122, 165, 122, 220, 182, 191, 134, 150]
-                    }, {
-                        name: 'CUCC',
-                        type: 'line',
-                        smooth: true,
-                        symbol: 'circle',
-                        symbolSize: 5,
-                        showSymbol: false,
-                        lineStyle: {
-                            normal: {
-                                width: 1
-                            }
-                        },
-                        areaStyle: {
-                            normal: {
-                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                    offset: 0,
-                                    color: 'rgba(219, 50, 51, 0.3)'
-                                }, {
-                                    offset: 0.8,
-                                    color: 'rgba(219, 50, 51, 0)'
-                                }], false),
-                                shadowColor: 'rgba(0, 0, 0, 0.1)',
-                                shadowBlur: 10
-                            }
-                        },
-                        itemStyle: {
-                            normal: {
-                                color: 'rgb(219,50,51)',
-                                borderColor: 'rgba(219,50,51,0.2)',
-                                borderWidth: 12
-                            }
-                        },
-                        data: [220, 182, 125, 145, 122, 191, 134, 150, 120, 110, 165, 122]
-                    }]
+                    ]
                 })
             }
         }
