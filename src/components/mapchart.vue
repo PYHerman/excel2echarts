@@ -16,27 +16,30 @@
    import UploadExcelComponent from './upload'
 
    function UpdateEcharts(data) {
-
+       var res = [];
         var temp = JSON.stringify(data)//提取省份和应用锁数据
        var newd = JSON.parse(temp);
         console.log(newd);
-
-        var province={
-            name:null,
-            value:null
-        };//按储存省份数据
-        var newdata=new Array();
         for(var key in newd){
             //console.log("key名称是："+key+",key的值是："+newd[key]['分支']+newd[key]['应用锁'])
-            province.name=newd[key]['分支'];
-            province.value=newd[key]['应用锁'];
 
-            newdata.push(province);
-            console.log(newdata);//////////////////////////////////////////////////////待解决
+
+            if ( newd[key]['分支']) {
+                res.push({
+                    name: newd[key]['分支'],
+                    value: newd[key]['应用锁']
+                });
+
+            }
+            //console.log(newdata);//////////////////////////////////////////////////////待解决
         }
-        console.log(newdata);
 
-   }
+       console.log(res);
+        return res;
+
+
+   };
+
     export default {
         name:"mapchart",
         components:{
@@ -68,61 +71,14 @@
             }
         },
         mounted() {
-            let myChart = echarts.init(document.getElementById(this.id));
-
-            /**
-             * 中国地图
-             * 必须引入china.js
-             * https://www.cnblogs.com/ldlx-mars/p/9242250.html
-             * map配置
-             * https://echarts.baidu.com/option.html#series-map.map
-             * 高亮颜色
-             * https://www.cnblogs.com/xianwen/p/6045454.html
-             */
-            let option = {
-                tooltip:{},
-                //侧边滑块配置
-                visualMap:{
-                    min:0,
-                    max:10000,
-                    left:'left',
-                    text:['高','低'],
-
-                    inRange:{
-                        color:['#fff585', 'rgb(199,54,67)']
-                    },
-                    realtime:false,
-                    calculable:true,
-
-                },
-                series: [{
-                    name:'数据1',
-                    type: 'map',
-                    map: 'china',
-                    roam: true,
-                    label:{
-                        normal: {
-                            show: false,//显示省份标签
-                            formatter:'{b}',
-                            position:'right',
-                            textStyle:{color:"rgba(20,2,4,0.93)"}//省份标签字体颜色
-                        },
-                        emphasis: {//对应的鼠标悬浮效果
-                            show: true,
-                            textStyle:{color:"#800080"}
-                        }
-                    },
-                    data:[
-                        {name:'北京',value:0},
-
-                    ],
-
-                }],
-
-
-
-            };
-            myChart.setOption(option);
+            this.initChart()
+        },
+        beforeDestroy() {
+            if (!this.chart) {
+                return
+            }
+            this.chart.dispose()
+            this.chart = null
         },
         methods:{
             beforeUpload(file) {
@@ -141,7 +97,58 @@
             handleSuccess({ results, header }) {
                 this.tableData = results
                 this.tableHeader = header
-                UpdateEcharts(this.tableData)
+                this.chart.setOption({
+                    series: [{
+                        data: UpdateEcharts(this.tableData)
+                    }]
+                })
+            },
+            //---------------------echarts-----------------------------
+            initChart(){
+                this.chart = echarts.init(document.getElementById(this.id))
+
+                this.chart.setOption({
+                    tooltip:{},
+                    //侧边滑块配置
+                    visualMap:{
+                        min:0,
+                        max:10000,
+                        left:'left',
+                        text:['高','低'],
+
+                        inRange:{
+                            color:['#fff585', 'rgb(199,54,67)']
+                        },
+                        realtime:false,
+                        calculable:true,
+
+                    },
+                    series: [{
+                        name:'数据1',
+                        type: 'map',
+                        map: 'china',
+                        roam: true,
+                        label:{
+                            normal: {
+                                show: false,//显示省份标签
+                                formatter:'{b}',
+                                position:'right',
+                                textStyle:{color:"rgba(20,2,4,0.93)"}//省份标签字体颜色
+                            },
+                            emphasis: {//对应的鼠标悬浮效果
+                                show: true,
+                                textStyle:{color:"#800080"}
+                            }
+                        },
+                        data:[],
+
+                    }],
+
+
+
+                })
+
+
             },
 
         }
