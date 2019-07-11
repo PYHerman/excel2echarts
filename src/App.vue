@@ -25,11 +25,7 @@ export default {
 
   },
   components:{
-
         Aside,
-
-
-
   }
 }
 </script>
@@ -54,7 +50,9 @@ export default {
 
 
   body > .el-container {
-    margin-bottom: 40px;
+      margin-bottom: 40px;
+
+
   }
 
 

@@ -3,7 +3,7 @@
     <div :id="id" class=chart-container :style="{height:height,width:width}" />
     <div class="app-container">
         <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
-        <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
+        <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px; background-color: #e9eef3">
             <el-table-column v-for="item of tableHeader" :key="item" :prop="item" :label="item" />
         </el-table>
     </div>
@@ -117,8 +117,15 @@
             initChart(){
                 this.chart = echarts.init(document.getElementById(this.id))
 
+                //chart自适应变化
+                window.onresize = this.chart.resize;
+
                 this.chart.setOption({
                     tooltip:{},
+                    title: {
+                        text: '用户地区分布图',
+                        left: 'center'
+                    },
                     //侧边滑块配置
                     visualMap:{
                         min:0,
@@ -148,7 +155,7 @@
                         roam: true,
                         label:{
                             normal: {
-                                show: false,//显示省份标签
+                                show: true,//显示省份标签
                                 formatter:'{b}',
                                 position:'right',
                                 textStyle:{color:"rgba(20,2,4,0.93)"}//省份标签字体颜色

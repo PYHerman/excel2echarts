@@ -1,6 +1,6 @@
 <template>
 <el-aside width="200px">
- <el-menu default-active="this.$route.path"  router class="el-menu-vertical-demo" @open="handleOpen" @close=" handleClose">
+ <el-menu default-active="this.$route.path"  router class="el-menu-vertical-demo" >
   <el-menu-item index="/piechart" >
    <i class="el-icon-orange"></i>
    <span slot="title">饼图</span>
