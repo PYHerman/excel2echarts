@@ -32,7 +32,14 @@
     }
     //获取名称
     function getName(tabledata) {
-         console.log(tabledata);//（怎么直接通了
+         console.log(tabledata);
+        var res=[];
+        for(let key in tabledata)
+        {
+            res.push(tabledata[key]['头衔'])
+        }
+
+        return res;
     }
 
     export default {
@@ -115,6 +122,7 @@
                     }
                     })
             },
+
             //以下为echarts配置
             initChart() {
                 this.chart = echarts.init(document.getElementById(this.id))
@@ -163,6 +171,7 @@
                         ],
                         label:{
                             normal:{
+                                show:true,
                                 formatter:" {b}：{c} \n {d}% ",
                             }
                         },
