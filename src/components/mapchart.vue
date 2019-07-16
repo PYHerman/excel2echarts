@@ -3,7 +3,7 @@
     <div :id="id" class=chart-container :style="{height:height,width:width}" />
     <div class="app-container">
         <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
-        <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px; background-color: #e9eef3">
+        <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px">
             <el-table-column v-for="item of tableHeader" :key="item" :prop="item" :label="item" />
         </el-table>
     </div>
@@ -134,7 +134,7 @@
                         text:['高','低'],
 
                         inRange:{
-                            color:['#fff585', 'rgb(199,54,67)']
+                            color:['#fffcc4', 'rgb(199,54,67)']
                         },
                         realtime:false,
                         calculable:true,
