@@ -20,46 +20,58 @@
     //修改表头
     function SetHeader(data) {
         var res = [];
+        //转化数据格式，最终生成的newd为map结构
+
         for (var key in data) {
             //待定方法，筛去多余表头元素
-            if (data[key] === '名称')
+            if (key === '0'||data[key] === 'Y'||data[key] === 'y'||data[key] === 'TYPE'||data[key] === 'type')
                 continue;
             res.push(data[key])
         }
-
-
         return res;
     }
 
 
-    //修改图表内容
+    //修改表内数据
     function SetTable(data) {
         var series = [];
-        //转化数据格式，最终生成的newd为map结构
 
-        var temp = JSON.stringify(data)
-        var newd = JSON.parse(temp);
-        //console.log(newd);
-        for (var key in newd) {
+        for (var key in data) {
             //数据名称
-            let name = newd[key]['名称'];
+            let name = data[key]['名称'];
+            //类型
+            let TYPE = 'line';
+            //Y轴
+            let Y = '0';
             //数据值数组
-            let array = Object.values(newd[key]);
+            let array = Object.values(data[key]);
+            //筛出配置项
+            for(let i=0; i<array.length; i++)
+            {
+                if(array[i]==='左'||array[i]==='右')
+                    Y=array[i]==='左'?0:1
+                else if(array[i]==='line'||array[i]==='bar')
+                    TYPE=array[i]==='line'?'line':'bar'
+                else
+                    continue;
+                array.splice(i,1);
+                i--;
+            }
             array.splice(0, 1);
-            if (name === '崩溃率') {
+            if (name.indexOf('率')!==-1) {
                 for (let i = 0; i < array.length; i++) {
                     //百分数乘100并取两位
                     array[i] *= 100;
                     array[i] = array[i].toFixed(2);
-
                 }
+                Y=0;
             }
             series.push({
                 name: name,
                 data: array,
-                type: 'line',
-                //如果是崩溃率就选择左边的y轴
-                yAxisIndex: name === '崩溃率' ? 0 : 1,
+                type: TYPE,
+
+                yAxisIndex: Y,
                 label: {
                     normal: {
                         show: true,
@@ -105,17 +117,9 @@
         },
         mounted() {
             this.initChart();
-
-        },
-        beforeDestroy() {
-            if (!this.chart) {
-                return
-            }
-            this.chart.dispose();
-            this.chart = null
         },
         methods: {
-            handleSuccess({results, header}) {
+            handleSuccess({results, header, }) {
                 this.tableData = results;
                 this.tableHeader = header;
 
@@ -126,6 +130,9 @@
                     xAxis: {
                         data: SetHeader(this.tableHeader),
                         categories: 'category',
+                        axisTick:{
+                            interval:0
+                        },
                     },
                     series: SetTable(this.tableData)
 
@@ -161,12 +168,11 @@
                             magicType: {show: true, type: ['line', 'bar']},
                             restore: {show: true},
                             saveAsImage: {show: true},
-                            //-------------------------------------------------------------------------------------------------
                             myTool1: {
                                 show: true,
                                 title: '标签显示',
                                 icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.305,6.82c-6.475,0-11.306-4.567-11.306-6.82s4.852-6.812,11.306-6.812C427.841,588.632,432.452,593.191,432.45,595.444L432.45,595.444z M421.155,589.876c-3.009,0-5.448,2.495-5.448,5.572s2.439,5.572,5.448,5.572c3.01,0,5.449-2.495,5.449-5.572C426.604,592.371,424.165,589.876,421.155,589.876L421.155,589.876z M421.146,591.891c-1.916,0-3.47,1.589-3.47,3.549c0,1.959,1.554,3.548,3.47,3.548s3.469-1.589,3.469-3.548C424.614,593.479,423.062,591.891,421.146,591.891L421.146,591.891zM421.146,591.891',
-                                onclick: function(a, obj, c, d) {
+                                onclick: function(a, obj) {
                                     var op = obj.getOption();
 
                                     var tmpSerise = [];
@@ -181,8 +187,6 @@
 
                             },
 
-
-
                         }
                     },
                     legend: {
@@ -195,20 +199,14 @@
                     yAxis: [
                         {
                             type: 'value',
-                            name: '崩溃率',
-                            min: 0.00,
-                            max: 3.00,
-                            interval: 0.25,
+                            name: '百分率',
                             axisLabel: {
                                 formatter: '{value} %'
                             }
                         },
                         {
                             type: 'value',
-                            name: '活跃用户数',
-                            min: 0,
-                            max: 600000,
-                            interval: 50000,
+                            name: '数量',
                             axisLabel: {
                                 formatter: '{value}'
                             }
@@ -220,6 +218,9 @@
                             data: ["0.67", "1.34", "1.12", "2.54", "1.45", "0.75"],
                             type: 'line',
                             yAxisIndex: 0,
+                            label:{
+                                show:true
+                            }
 
                         }
                     ]
@@ -233,7 +234,6 @@
 <style scoped>
     .chart-container {
         position: relative;
-        width: 100%;
         height: calc(100vh - 84px);
     }
 </style>

@@ -2,7 +2,9 @@
     <el-container>
 
 <!--侧边导航栏-->
+        <el-header>
         <Aside/>
+        </el-header>
         <el-main>
 <!--路由视图-->
             <el-row>
@@ -42,14 +44,9 @@ export default {
 
 
  .el-container {
-     display: flex;
-     justify-content: center;
-     flex-wrap: wrap;
       margin-bottom: 40px;
       width:100%;
       height:100%;
-
-
   }
 
 

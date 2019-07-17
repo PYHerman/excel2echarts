@@ -1,6 +1,6 @@
 <template>
- <el-header>
-  <el-menu :default-active="activeIndex"  router class="el-menu-demo" mode="horizontal" >
+
+  <el-menu  router class="el-menu-demo" mode="horizontal" >
    <el-menu-item index="/piechart" >
     <i class="el-icon-orange"></i>
     百分比饼图
@@ -13,8 +13,13 @@
     <i class="el-icon-map-location"></i>
     地理分布图
    </el-menu-item>
+   <el-menu-item index="/" style="margin-left: auto">
+    <i class="el-icon-s-promotion"></i>
+    引导
+   </el-menu-item>
+
   </el-menu>
- </el-header>
+
 </template>
 
 <script>
@@ -24,10 +29,11 @@
 
 </script>
 <style scoped>
- .el-header{
+ .el-menu{
 
+  display: flex;
+  justify-content: space-between;
   color: #333;
-  text-align: center;
   line-height: 60px;
 
  }

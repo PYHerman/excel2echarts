@@ -8,6 +8,8 @@ import echarts from 'echarts'
 import PieChart from './components/piechart'
 import LineChart from './components/linechart'
 import MapChart from './components/mapchart'
+import Guide from './components/guide'
+
 
 //全局引用
 Vue.use(ElementUI);
@@ -21,12 +23,10 @@ Vue.component('echarts',echarts);
 
 
 const routes = [
-  // {path:'/'},//首页，待完成
+  {path:'/', name:'guide',component:Guide},
   { path: '/piechart',name:'piechart',component:PieChart},
   { path: '/linechart',name:'linechart',component:LineChart},
   { path: '/mapchart',name:'mapchart',component:MapChart},
-
-
 ]
 
 
