@@ -35,16 +35,15 @@
     //修改表内数据
     function SetTable(data) {
         var series = [];
-
         for (var key in data) {
             //数据名称
-            let name = data[key]['名称'];
+            var name = data[key]['名称'];
             //类型
-            let TYPE = 'line';
+            var TYPE = 'line';
             //Y轴
-            let Y = '0';
+            var Y = '0';
             //数据值数组
-            let array = Object.values(data[key]);
+            var array = Object.values(data[key]);
             //筛出配置项
             for(let i=0; i<array.length; i++)
             {
@@ -64,7 +63,7 @@
                     array[i] *= 100;
                     array[i] = array[i].toFixed(2);
                 }
-                Y=0;
+                Y=1;
             }
             series.push({
                 name: name,
@@ -82,6 +81,17 @@
         }
 
         return series;
+    }
+
+    function SetLegend(data){
+        var legend = {
+            data:[]
+        };
+        for (var key in data) {
+            var name = data[key]['名称'];
+            legend.data.push(name)
+        }
+        return legend;
     }
 
     export default {
@@ -134,8 +144,10 @@
                             interval:0
                         },
                     },
-                    series: SetTable(this.tableData)
-
+                    //设置数据
+                    series: SetTable(this.tableData),
+                    //设置legend
+                    legend:SetLegend(this.tableData),
 
                 })
             },
@@ -199,25 +211,26 @@
                     yAxis: [
                         {
                             type: 'value',
-                            name: '百分率',
-                            axisLabel: {
-                                formatter: '{value} %'
-                            }
-                        },
-                        {
-                            type: 'value',
                             name: '数量',
                             axisLabel: {
                                 formatter: '{value}'
                             }
                         },
+                        {
+                            type: 'value',
+                            name: '百分率',
+                            axisLabel: {
+                                formatter: '{value} %'
+                            }
+                        },
+
                     ],
                     series: [
                         {
                             name: '崩溃率',
                             data: ["0.67", "1.34", "1.12", "2.54", "1.45", "0.75"],
                             type: 'line',
-                            yAxisIndex: 0,
+                            yAxisIndex: 1,
                             label:{
                                 show:true
                             }

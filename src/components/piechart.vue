@@ -13,18 +13,18 @@
 <script>
     import echarts from 'echarts'
     import UploadExcelComponent from './upload'
-    //获取人数
+    //获取数据
     function updateChart(data) {
         var res = [];
         for(var key in data){
             //忽略总计格
-            if ( data[key]['头衔']!=='总计'){
+
                 res.push({
-                    name: data[key]['头衔'],
-                    value: data[key]['人数'],
+                    name: data[key]['名称'],
+                    value: data[key]['数据'],
                 });
             }
-        }
+
         return res;
     }
     //获取名称
@@ -33,7 +33,7 @@
         var res=[];
         for(let key in tabledata)
         {
-            res.push(tabledata[key]['头衔'])
+            res.push(tabledata[key]['名称'])
         }
 
         return res;

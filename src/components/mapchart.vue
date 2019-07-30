@@ -17,12 +17,13 @@
 
    function UpdateEcharts(data) {
        var res = [];
+
         for(var key in data){
-            //作为测试只提取了省份名和应用锁两个数据，后期可以通过加series来增加显示数据
-            if ( data[key]['分支']){
+            //只提取了两个数据
+            if ( data[key]['名称']){
                 res.push({
-                    name: data[key]['分支'],
-                    value: data[key]['应用锁']
+                    name: data[key]['名称'],
+                    value: data[key]['数据']
                 });
             }
         }
@@ -83,7 +84,7 @@
                     },
 
                     series: [{
-                        name:'应用锁',
+                        name:'数据',
                         data: newdata,
                     }],
 
